@@ -189,23 +189,15 @@ export default function AccommodationPage() {
   const [currentImage, setCurrentImage] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [formOpacity, setFormOpacity] = useState(1);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const fadeStart = 100;
-      const fadeEnd = 400;
-
-      if (scrollY > fadeStart) {
-        const opacity = Math.max(0, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
-        setFormOpacity(opacity);
-      } else {
-        setFormOpacity(1);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check initial state
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -275,138 +267,253 @@ export default function AccommodationPage() {
       </section>
 
       {/* Booking Search */}
-      <section
-        className="py-8 bg-[#1e1208] sticky top-16 z-40"
-        style={{ opacity: formOpacity, transition: "opacity 0.3s ease" }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-4 md:py-8 bg-[#1e1208] sticky top-16 z-40">
+        <div className={isScrolled ? "w-full px-0" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}>
           <form
             onSubmit={handleSubmit(onSearch)}
             className="bg-white rounded-lg p-4 md:p-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div>
-                <label className="block font-quattro text-sm text-[#150e08] mb-1">
-                  Check-in
-                </label>
-                <Controller
-                  name="checkIn"
-                  control={control}
-                  render={({ field }) => (
-                    <input
-                      {...field}
-                      type="date"
-                      min={today}
-                      className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
-                    />
-                  )}
-                />
-                {errors.checkIn && (
-                  <p className="text-[#b22222] text-xs mt-1 font-quattro">
-                    {errors.checkIn.message}
-                  </p>
-                )}
+            {/* When scrolled: 2-row layout, When not scrolled: single row */}
+            {isScrolled ? (
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+                {/* Row 1: Check-in, Check-out, Adults, Children */}
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Check-in
+                  </label>
+                  <Controller
+                    name="checkIn"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="date"
+                        min={today}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Check-out
+                  </label>
+                  <Controller
+                    name="checkOut"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="date"
+                        min={today}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Adults
+                  </label>
+                  <Controller
+                    name="adults"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Adult{num > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Children
+                  </label>
+                  <Controller
+                    name="children"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[0, 1, 2, 3, 4].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Child{num !== 1 ? "ren" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
+                {/* Row 2: Rooms and Search button side by side */}
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Rooms
+                  </label>
+                  <Controller
+                    name="rooms"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Room{num > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    type="submit"
+                    className="w-full cursor-pointer bg-[#7b1c3e] hover:bg-[#7b1c3e]/90 py-1.5 text-sm"
+                  >
+                    Search
+                  </Button>
+                </div>
               </div>
-
-              <div>
-                <label className="block font-quattro text-sm text-[#150e08] mb-1">
-                  Check-out
-                </label>
-                <Controller
-                  name="checkOut"
-                  control={control}
-                  render={({ field }) => (
-                    <input
-                      {...field}
-                      type="date"
-                      min={today}
-                      className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
-                    />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Check-in
+                  </label>
+                  <Controller
+                    name="checkIn"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="date"
+                        min={today}
+                        className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
+                      />
+                    )}
+                  />
+                  {errors.checkIn && (
+                    <p className="text-[#b22222] text-xs mt-1 font-quattro">
+                      {errors.checkIn.message}
+                    </p>
                   )}
-                />
-                {errors.checkOut && (
-                  <p className="text-[#b22222] text-xs mt-1 font-quattro">
-                    {errors.checkOut.message}
-                  </p>
-                )}
-              </div>
+                </div>
 
-              <div>
-                <label className="block font-quattro text-sm text-[#150e08] mb-1">
-                  Adults
-                </label>
-                <Controller
-                  name="adults"
-                  control={control}
-                  render={({ field }) => (
-                    <select
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
-                    >
-                      {[1, 2, 3, 4, 5, 6].map((num) => (
-                        <option key={num} value={num}>
-                          {num} Adult{num > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Check-out
+                  </label>
+                  <Controller
+                    name="checkOut"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="date"
+                        min={today}
+                        className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro"
+                      />
+                    )}
+                  />
+                  {errors.checkOut && (
+                    <p className="text-[#b22222] text-xs mt-1 font-quattro">
+                      {errors.checkOut.message}
+                    </p>
                   )}
-                />
-              </div>
+                </div>
 
-              <div>
-                <label className="block font-quattro text-sm text-[#150e08] mb-1">
-                  Children
-                </label>
-                <Controller
-                  name="children"
-                  control={control}
-                  render={({ field }) => (
-                    <select
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
-                    >
-                      {[0, 1, 2, 3, 4].map((num) => (
-                        <option key={num} value={num}>
-                          {num} Child{num !== 1 ? "ren" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                />
-              </div>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Adults
+                  </label>
+                  <Controller
+                    name="adults"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Adult{num > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
 
-              <div>
-                <label className="block font-quattro text-sm text-[#150e08] mb-1">
-                  Rooms
-                </label>
-                <Controller
-                  name="rooms"
-                  control={control}
-                  render={({ field }) => (
-                    <select
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
-                    >
-                      {[1, 2, 3, 4, 5, 6].map((num) => (
-                        <option key={num} value={num}>
-                          {num} Room{num > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                />
-              </div>
-            </div>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Children
+                  </label>
+                  <Controller
+                    name="children"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[0, 1, 2, 3, 4].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Child{num !== 1 ? "ren" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
 
-            <Button
-              type="submit"
-              className="w-full md:w-auto mt-4 cursor-pointer bg-[#7b1c3e] hover:bg-[#7b1c3e]/90"
-            >
-              Search Available Rooms
-            </Button>
+                <div>
+                  <label className="block font-quattro text-sm text-[#150e08] mb-1">
+                    Rooms
+                  </label>
+                  <Controller
+                    name="rooms"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg border border-[#c9b99a] focus:border-[#7b1c3e] focus:ring-2 focus:ring-[#7b1c3e]/20 outline-none transition-colors font-quattro bg-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6].map((num) => (
+                          <option key={num} value={num}>
+                            {num} Room{num > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
+
+                <div className="md:col-span-5 mt-2">
+                  <Button
+                    type="submit"
+                    className="w-full md:w-auto cursor-pointer bg-[#7b1c3e] hover:bg-[#7b1c3e]/90"
+                  >
+                    Search Available Rooms
+                  </Button>
+                </div>
+              </div>
+            )}
           </form>
         </div>
       </section>
@@ -656,7 +763,7 @@ export default function AccommodationPage() {
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer"
+                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-gray-50 transition-colors"
                 >
                   <span className="font-oswald text-lg text-[#150e08] pr-4">
                     {faq.question}
