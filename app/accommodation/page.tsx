@@ -267,7 +267,7 @@ export default function AccommodationPage() {
       </section>
 
       {/* Booking Search */}
-      <section className="py-4 md:py-8 bg-[#1e1208] sticky top-16 z-40">
+      <section className="py-4 md:py-8 bg-[#f5f0e6] sticky top-16 z-40 shadow-md">
         <div className={isScrolled ? "w-full px-0" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}>
           <form
             onSubmit={handleSubmit(onSearch)}
@@ -542,24 +542,27 @@ export default function AccommodationPage() {
                   key={room.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
-                  onClick={() => setSelectedRoom(room)}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden"
                 >
-                  <div className="relative h-48">
-                    <Image
-                      src={room.images[0]}
-                      alt={room.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute top-2 right-2 bg-[#7b1c3e] text-white px-2 py-1 rounded text-sm font-quattro">
-                      ${room.price}/night
+                  <Link href={`/accommodation/${room.id}`}>
+                    <div className="relative h-48 cursor-pointer">
+                      <Image
+                        src={room.images[0]}
+                        alt={room.name}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#7b1c3e] text-white px-2 py-1 rounded text-sm font-quattro">
+                        ${room.price}/night
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                   <div className="p-4">
-                    <h3 className="font-oswald text-xl text-[#150e08] mb-2">
-                      {room.name}
-                    </h3>
+                    <Link href={`/accommodation/${room.id}`}>
+                      <h3 className="font-oswald text-xl text-[#150e08] mb-2 hover:text-[#7b1c3e] transition-colors cursor-pointer">
+                        {room.name}
+                      </h3>
+                    </Link>
                     <p className="font-quattro text-sm text-[#7a5c3a] mb-3 line-clamp-2">
                       {room.description}
                     </p>
@@ -569,6 +572,11 @@ export default function AccommodationPage() {
                         Up to {room.maxPeople} guests
                       </span>
                     </div>
+                    <Link href={`/accommodation/${room.id}`}>
+                      <Button className="w-full mt-4 cursor-pointer bg-[#1e1208] hover:bg-[#1e1208]/90">
+                        View Room Details
+                      </Button>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
@@ -727,9 +735,16 @@ export default function AccommodationPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full mt-4 cursor-pointer bg-[#7b1c3e] hover:bg-[#7b1c3e]/90">
-                    Book This Room
-                  </Button>
+                  <div className="flex gap-3 mt-4">
+                    <Link href={`/accommodation/${room.id}`}>
+                      <Button className="flex-1 cursor-pointer bg-[#1e1208] hover:bg-[#1e1208]/90">
+                        View Room Details
+                      </Button>
+                    </Link>
+                    <Button className="flex-1 cursor-pointer bg-[#7b1c3e] hover:bg-[#7b1c3e]/90">
+                      Book This Room
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             ))}

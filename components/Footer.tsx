@@ -7,7 +7,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
             <h3 className="font-oswald text-3xl font-bold text-[#c9b99a] mb-4">
               SEASIDE RESORT
             </h3>
@@ -56,7 +56,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <h4 className="font-oswald text-lg font-semibold mb-4 text-[#c9b99a]">
               Quick Links
             </h4>
@@ -97,7 +97,7 @@ export function Footer() {
           </div>
 
           {/* Services */}
-          <div>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <h4 className="font-oswald text-lg font-semibold mb-4 text-[#c9b99a]">
               Services
             </h4>

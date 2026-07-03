@@ -94,7 +94,7 @@ export default function ContactPage() {
                 your perfect stay at Seaside Resort.
               </p>
 
-              <div className="space-y-6">
+              <div className="grid grid-cols-2 md:flex md:flex-col gap-4 md:space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-[#7b1c3e]/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <FaMapMarkerAlt className="text-[#7b1c3e]" />
